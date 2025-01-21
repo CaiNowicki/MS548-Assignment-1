@@ -6,11 +6,11 @@ import random
 class Card:
     """Represents a single playing card"""
     RANKS = ["2", "3", "4", "5", "6", "7", "8", "9", "10", "Jack", "Queen", "King", "Ace"]
-    SUITS = ["C", "S", "H", "D"]
+    SUITS = ["Clubs", "Spades", "Hearts", "Diamonds"]
     def __init__(self, suit, rank):
         self.suit = suit
         self.rank = rank
-        self.__value = self.RANKS.index(rank) #since cards starts at 2 but index starts at 0; Ace is worth 14
+        self.value = self.RANKS.index(rank) #since cards starts at 2 but index starts at 0; Ace is worth 14
     
     def __repr__(self):
         return f"{self.rank} of {self.suit}"
@@ -34,22 +34,24 @@ class Deck:
 class Hand:
     """Represents the cards owned by each player"""
     def __init__(self):
-        self.__cards = []
+        self.cards = []
     
     def add_cards(self, new_cards):
         """Add new card(s) to the hand"""
         if isinstance(new_cards, list):
-            self.__cards.extend(new_cards)
+            self.cards.extend(new_cards)
         else:
-            self.__cards.append(new_cards)
+            self.cards.append(new_cards)
 
     def play_card(self):
         """Plays (removes and returns) top card from the hand; return None if no cards in hand"""
-        return self.__cards.pop(0) if self.__cards else None
+        if self.cards: 
+            return self.cards.pop(0)
+        return None
     
     def has_cards(self):
         """Checks if player has cards in hand"""
-        return len(self.__cards) > 0
+        return len(self.cards) > 0
     
     def __repr__(self):
         return f"Player has {len(self.cards)} cards remaining."
@@ -67,7 +69,7 @@ class Game:
     
     def initialize_hands(self):
         """Distributes cards evenly to both players"""
-        while len(self.deck):
+        while len(self.deck) > 0:
             self.player_hand.add_cards(self.deck.deal_one())
             self.computer_hand.add_cards(self.deck.deal_one())
 
@@ -76,7 +78,11 @@ class Game:
     
         player_card = self.player_hand.play_card()
         computer_card = self.computer_hand.play_card()
+        if player_card is None or computer_card is None:
+            self.is_game_over()
+            return
         print(f"Player plays {player_card}. \n Computer plays {computer_card}.")
+        
 
         if player_card.value > computer_card.value:
             self.player_hand.add_cards([player_card, computer_card])
@@ -89,7 +95,8 @@ class Game:
             self.resolve_war(player_card, computer_card)
         
         if self.is_game_over():
-            menu() # need to separate main.py into functions file, import that, and call menu function here to go back to start
+            input("Game over! Press any key to return to the menu.")
+            return
         else:
             self.play_round()
 
@@ -101,22 +108,22 @@ class Game:
             card_pile.append(self.player_hand.play_card())
         else:
             if self.is_game_over():
-                menu()
+                return
         if self.computer_hand.has_cards():
             card_pile.append(self.computer_hand.play_card())
         else:
             if self.is_game_over():
-                menu()
+                return
         player_card = self.player_hand.play_card()
         computer_card = self.computer_hand.play_card()
         print(f"Player plays {player_card}. \n Computer plays {computer_card}.")
         if player_card.value > computer_card.value:
             card_pile.extend([player_card, computer_card])
-            self.player_hand.add_cards([card_pile])
+            self.player_hand.add_cards(card_pile)
             print("Player wins the round")
         elif player_card.value < computer_card.value:
             card_pile.extend([player_card, computer_card])
-            self.computer_hand.add_cards([card_pile])
+            self.computer_hand.add_cards(card_pile)
             print("Computer wins this round")
         else:
             print("It's a tie! Starting a battle...")
@@ -131,7 +138,8 @@ class Game:
                 print("Computer Wins. Better luck next time!")
             else:
                 print("It's a tie! You're both out of cards.")
-        return not self.player_hand.has_cards() or not self.computer_hand.has_cards()
+            return True
+        return False
     
     def __repr__(self):
         return (f"{self.player_hand} \n {self.computer_hand}")

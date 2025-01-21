@@ -1,6 +1,7 @@
 import sys
 import time
 import os
+from game_classes import Game
 
 def main():
     menu()
@@ -52,7 +53,19 @@ def rules():
 def play_game():
     clear_terminal()
     """Function to actually run the game - player draws a card, compares to computer, computer determines winner and take appropriate action"""
-    pass
+    print("Starting a new game...")
+    time.sleep(1)
+    
+    # Create a Game instance
+    game = Game()
+    
+    # Begin the game loop
+    while not game.is_game_over():
+        game.play_round()
+    
+    # After game completion, return to the main menu
+    input("Game over! Press any key to return to the menu.")
+    menu()
 
 def resume_game():
     clear_terminal()
