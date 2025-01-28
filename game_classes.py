@@ -4,6 +4,8 @@
 #instead of Hand class, I used pydealer.Stack, which has its own add() and deal() methods
 
 import pydealer
+import time
+from pydealer.const import BOTTOM
 
 class Game:
     """Represents the state of the game and runs the gameplay."""
@@ -39,13 +41,17 @@ class Game:
 
         # Compare card ranks
         if player_card[0].value > computer_card[0].value:
-            self.player_hand.add(player_card + computer_card)
+            self.player_hand.add(player_card + computer_card, end=BOTTOM)
             print("Player wins the round.")
+            #pause here to show what happens
+            time.sleep(1)
         elif player_card[0].value < computer_card[0].value:
-            self.computer_hand.add(player_card + computer_card)
+            self.computer_hand.add(player_card + computer_card, end=BOTTOM)
             print("Computer wins the round.")
+            time.sleep(1)
         else:
             print("It's a tie! Starting a battle...")
+            time.sleep(1)
             self.resolve_war(player_card, computer_card)
 
         # Check if the game is over
@@ -68,14 +74,17 @@ class Game:
 
             if player_card[0].value > computer_card[0].value:
                 card_pile.extend(player_card + computer_card)
-                self.player_hand.add(card_pile)
+                self.player_hand.add(card_pile, end=BOTTOM)
                 print("Player wins the war.")
+                time.sleep(1)
             elif player_card[0].value < computer_card[0].value:
                 card_pile.extend(player_card + computer_card)
-                self.computer_hand.add(card_pile)
+                self.computer_hand.add(card_pile, end=BOTTOM)
                 print("Computer wins the war.")
+                time.sleep(1)
             else:
                 print("It's another tie! Continuing the war...")
+                time.sleep(1)
                 self.resolve_war(player_card, computer_card, card_pile)
         else:
             # Handle a player running out of cards during a war

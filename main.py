@@ -62,6 +62,7 @@ def play_game():
     # Begin the game loop
     while not game.is_game_over():
         game.play_round()
+        time.sleep(0.5)
     
     # After game completion, return to the main menu
     input("Game over! Press any key to return to the menu.")
