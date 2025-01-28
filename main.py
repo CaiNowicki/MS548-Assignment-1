@@ -70,7 +70,8 @@ def play_game():
 def resume_game():
     clear_terminal()
     """Gets the game status from CSV file - should show how many cards each player has and how many cards are left in the deck. Play game as normal from this state."""
-    pass
+    print("Save function not yet implemented. Sorry!")
+    menu()
 
 def exit_function():
     print("Thanks for playing!")
